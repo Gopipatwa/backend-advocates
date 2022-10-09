@@ -10,7 +10,7 @@ class AdvocatesSerializer(serializers.ModelSerializer):
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Company
-        fields = "__all__"
+        fields = ["id",'name','logo','summary']
 
 class SocialSkillSerializer(serializers.ModelSerializer):
     class Meta:
