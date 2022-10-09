@@ -42,6 +42,14 @@ def companies(request,id:int=None):
 def advocates(request,id:int=None):
     if id==None:
         data = serializers.AdvocatesSerializer(Advocates.objects.all(),many=True)
+        for per in data.data:
+            sociallink = SocialLink.objects.filter(advocate_id = per['id'])
+            print(sociallink)
+            if sociallink:
+                social_resp = serializers.SocialSkillSerializer(sociallink,many=True)
+                per['links'] = [{i['platform_name']:i['link']} for i in social_resp.data]
+            else:
+                per['links']=[]
         return Response(data.data)
     else:
         query = Advocates.objects.filter(id=id)
@@ -51,7 +59,7 @@ def advocates(request,id:int=None):
             sociallink = SocialLink.objects.filter(advocate_id = resp.data[0]['id'])
             if sociallink:
                 social_resp = serializers.SocialSkillSerializer(sociallink,many=True)
-                resp.data[0]['links'] = social_resp.data[0]
+                resp.data[0]['links'] = [{i['platform_name']:i['link']} for i in social_resp.data]
             resp.data[0]['links'] = []
             return Response(resp.data)
         return Response(f"Not found id {id}")
